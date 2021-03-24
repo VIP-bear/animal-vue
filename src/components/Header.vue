@@ -16,11 +16,11 @@
     </div>
     <div v-if="isLogin" class="login-contain">
       <el-button class="btn-upload" type="info" round>上传图片</el-button>
-      <el-button class="btn-leader" title="排行榜" type="text" circle=""></el-button>
+      <el-button class="btn-leader" title="排行榜" type="text" circle></el-button>
       <el-button class="btn-message" title="消息" type="text" circle></el-button>
       <el-dropdown trigger="click" class="dropdown">
         <span class="el-dropdown-link">
-          <el-avatar :size="50">登录</el-avatar>
+          <el-avatar :size="50">User</el-avatar>
         </span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item icon="el-icon-plus">黄金糕</el-dropdown-item>

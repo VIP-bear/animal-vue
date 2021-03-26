@@ -22,12 +22,20 @@
         <span class="el-dropdown-link">
           <el-avatar :size="50">User</el-avatar>
         </span>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item icon="el-icon-plus">黄金糕</el-dropdown-item>
-          <el-dropdown-item icon="el-icon-circle-plus">狮子头</el-dropdown-item>
-          <el-dropdown-item icon="el-icon-circle-plus-outline">螺蛳粉</el-dropdown-item>
-          <el-dropdown-item icon="el-icon-check">双皮奶</el-dropdown-item>
-          <el-dropdown-item icon="el-icon-circle-check">蚵仔煎</el-dropdown-item>
+        <el-dropdown-menu slot="dropdown" class="dorpdown-menu">
+          <div style="font-size:12px;margin:15px 0px 20px 20px;cursor: pointer;">
+            <el-avatar :size="60">User</el-avatar>
+            <div>用户名</div>
+            <div>@用户id</div>
+            <div>
+              <el-button type="text">关注 200</el-button>
+              <el-button type="text">粉丝 100</el-button>
+            </div>
+          </div>
+          <el-dropdown-item style="font-size:16px;margin-top:5px;" icon="el-icon-star-off">收藏</el-dropdown-item>
+          <el-dropdown-item style="font-size:16px;margin-top:5px;" icon="el-icon-bell">通知</el-dropdown-item>
+          <el-dropdown-item style="font-size:16px;margin-top:5px;" icon="el-icon-setting">设置</el-dropdown-item>
+          <el-dropdown-item style="font-size:16px;margin-top:5px;" icon="el-icon-close">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -36,8 +44,6 @@
         <span><el-avatar :size="50">登录</el-avatar></span>
       </el-dropdown>
     </div>
-    <br />
-    <el-divider class="line" direction="horizontal"></el-divider>
   </div>
 </template>
 
@@ -57,7 +63,6 @@ export default {
 .wrapper {
   margin-top: -60px;
   height: 150px;
-  width: 100%;
   white-space: nowrap;
 }
 .ms-title {
@@ -109,7 +114,7 @@ export default {
   margin-top: 10px;
   margin-right: 10px;
 }
-.line {
-  margin-top: -5px;
+.dorpdown-menu {
+  width: 200px;
 }
 </style>

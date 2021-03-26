@@ -5,6 +5,7 @@ import Login from '@/pages/Login.vue'
 import Registor from '@/pages/Registor.vue'
 import Home from '@/pages/Home.vue'
 import ArtWork from '@/pages/ArtWork.vue'
+import User from '@/pages/User.vue'
 
 Vue.use(Router)
 
@@ -36,6 +37,11 @@ export default new Router({
       path: '/artworks/*',
       name: 'ArtWork',
       component: ArtWork
+    },
+    {
+      path: '/users/*',
+      name: 'User',
+      component: User
     }
   ]
 })

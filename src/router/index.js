@@ -6,6 +6,7 @@ import Registor from '@/pages/Registor.vue'
 import Home from '@/pages/Home.vue'
 import ArtWork from '@/pages/ArtWork.vue'
 import User from '@/pages/User.vue'
+import Following from '@/pages/Following.vue'
 
 Vue.use(Router)
 
@@ -34,14 +35,19 @@ export default new Router({
       component: Home
     },
     {
-      path: '/artworks/*',
+      path: '/artworks/:id',
       name: 'ArtWork',
       component: ArtWork
     },
     {
-      path: '/users/*',
+      path: '/users/:id',
       name: 'User',
       component: User
+    },
+    {
+      path: '/users/:id/following',
+      name: 'Following',
+      component: Following
     }
   ]
 })

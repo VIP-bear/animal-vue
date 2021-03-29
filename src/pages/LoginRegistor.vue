@@ -3,10 +3,10 @@
     <div class="login-registor">
       <div class="ms-title">animal</div>
       <div>
-        <el-button class="registor" type="primary" round>注册账号</el-button>
+        <el-button class="registor" type="primary" round @click="registor">注册账号</el-button>
       </div>
       <div>
-        <el-button class="login" round>登录</el-button>
+        <el-button class="login" round @click="login">登录</el-button>
       </div>
       <el-divider direction="horizontal"></el-divider>
       <div class="ms-text">You never know how strong you are until being strong is your only choice.</div>
@@ -20,6 +20,14 @@ export default {
   data () {
     return {
     }
+  },
+  methods: {
+    registor () {
+      this.$router.push({path: '/registor'})
+    },
+    login () {
+      this.$router.push({path: '/login'})
+    }
   }
 }
 </script>
@@ -27,15 +35,13 @@ export default {
 <style scoped>
 .wrapper {
   background-image: url(../assets/img/bg-image.png);
-  width: auto;
   height: 945px;
   margin: -60px -8px;
-  background-size: cover;
 }
 .ms-title {
   line-height: 3;
   font-size: 40px;
-  color: green;
+  color: rgb(76, 119, 247);
   user-select: none;
 }
 .ms-text {

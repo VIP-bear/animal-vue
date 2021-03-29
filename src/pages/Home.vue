@@ -111,6 +111,7 @@ export default {
   height: 220px;
   width: 220px;
   margin: 10px 10px;
+  cursor: pointer;
 }
 .attention-contain {
   margin-top: 1100px;

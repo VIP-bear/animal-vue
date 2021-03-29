@@ -65,7 +65,7 @@ export default {
 .ms-title {
   line-height: 3;
   font-size: 40px;
-  color: green;
+  color: rgb(76, 119, 247);
   user-select: none;
 }
 .el-form-item {
@@ -120,9 +120,7 @@ export default {
 }
 .wrapper {
   background-image: url(../assets/img/bg-image.png);
-  width: auto;
   height: 945px;
-  margin-top: -60px;
-  background-size: cover;
+  margin: -60px -8px;
 }
 </style>

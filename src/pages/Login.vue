@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <div class="btn-registor">
-      <el-button type="primary" round>注册账号</el-button>
+      <el-button type="primary" round @click="registor">注册账号</el-button>
     </div>
     <div class="login-contain">
       <div class="ms-title">animal</div>
@@ -40,6 +40,11 @@ export default {
         password: ''
       }
     }
+  },
+  methods: {
+    registor () {
+      this.$router.push({path: '/registor'})
+    }
   }
 }
 </script>
@@ -48,7 +53,7 @@ export default {
 .ms-title {
   line-height: 3;
   font-size: 40px;
-  color: green;
+  color: rgb(76, 119, 247);
   user-select: none;
 }
 .ms-text {
@@ -103,9 +108,7 @@ export default {
 }
 .wrapper {
   background-image: url(../assets/img/bg-image.png);
-  width: auto;
   height: 945px;
-  margin-top: -60px;
-  background-size: cover;
+  margin: -60px -8px;
 }
 </style>

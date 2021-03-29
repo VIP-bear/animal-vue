@@ -59,12 +59,6 @@ export default {
 .user-header {
   margin-top: -20px;
 }
-.user-name {
-  position: absolulte;
-  margin-left: 10px;
-  margin-top: 10px;
-  font-size: 16px;
-}
 .attention-num {
   background-color: rgb(240, 235, 235);
   margin-top: 10px;

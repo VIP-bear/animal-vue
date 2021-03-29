@@ -24,7 +24,7 @@
             <div class="user-image">
               <el-col :span="8" v-for="o in 6" :key="o">
                 <el-image
-                  style="width: 80px; height: 80px"
+                  style="width: 80px; height: 80px; cursor: pointer;"
                   :src="url"
                   :fit="fill">
                   {{o}}
@@ -41,6 +41,9 @@
                 effect="dark">
                 {{ item.label }}
               </el-tag>
+            </div>
+            <div class="image-desc">
+              图片描述信息。。。巴拉巴拉巴拉巴拉巴拉巴拉巴拉。。。。。
             </div>
             <div>
               <div class="image-number">
@@ -134,6 +137,7 @@ export default {
 <style scoped>
 .main-msg {
   margin-left: -100px;
+  margin-right: -8px;
 }
 .image {
   margin-top: 10px;
@@ -178,6 +182,8 @@ export default {
   position: absolute;
   margin-top: 220px;
   margin-left: -250px;
+  font-size: 24px;
+  font-weight: bold;
 }
 .image-tags {
   margin-top: 350px;
@@ -190,17 +196,28 @@ export default {
   height: 40px;
   margin: 5px 5px 0px 0px;
   text-align: center;
+  cursor: pointer;
+}
+.image-desc {
+  word-break:break-all;
+  word-wrap:break-word;
+  margin-left: 40px;
+  margin-top: 30px;
+  width: 250px;
+  text-align: left;
 }
 .image-number {
   width: 250px;
-  margin-top: 170px;
+  position: absolute;
+  margin-top: 100px;
   margin-left: -10px;
   font-size: 14px;
 }
 .image-time {
+  position: absolute;
   width: 250px;
   margin-left: -30px;
-  margin-top: 10px;
+  margin-top: 120px;
   font-size: 14px;
 }
 .imag-operate {
@@ -242,6 +259,7 @@ export default {
   width: 220px;
   margin-right: 10px;
   margin-left: 10px;
+  cursor: pointer;
 }
 .load-image {
   margin-top: 50px;

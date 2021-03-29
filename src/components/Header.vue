@@ -28,7 +28,7 @@
             <div>用户名</div>
             <div>@用户id</div>
             <div>
-              <el-button type="text">关注 200</el-button>
+              <el-button type="text" @click="following">关注 200</el-button>
               <el-button type="text">粉丝 100</el-button>
             </div>
           </div>
@@ -55,6 +55,13 @@ export default {
       isCollapse: false,
       input_content: '',
       isLogin: true
+    }
+  },
+  methods: {
+    following () {
+      // let id = this.$route.params.id
+      let id = 1
+      this.$router.push({path: '/users/' + id + '/following'})
     }
   }
 }

@@ -15,7 +15,7 @@
       </el-input>
     </div>
     <div v-if="isLogin" class="login-contain">
-      <el-button class="btn-upload" type="info" round>上传图片</el-button>
+      <el-button class="btn-upload" type="info" round @click="upload">上传图片</el-button>
       <el-button class="btn-leader" title="排行榜" type="text" circle></el-button>
       <el-button class="btn-message" title="消息" type="text" circle></el-button>
       <el-dropdown trigger="click" class="dropdown">
@@ -62,6 +62,9 @@ export default {
       // let id = this.$route.params.id
       let id = 1
       this.$router.push({path: '/users/' + id + '/following'})
+    },
+    upload () {
+      this.$router.push({path: '/upload'})
     }
   }
 }

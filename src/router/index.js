@@ -7,6 +7,7 @@ import Home from '@/pages/Home.vue'
 import ArtWork from '@/pages/ArtWork.vue'
 import User from '@/pages/User.vue'
 import Following from '@/pages/Following.vue'
+import Upload from '@/pages/Upload.vue'
 
 Vue.use(Router)
 
@@ -48,6 +49,11 @@ export default new Router({
       path: '/users/:id/following',
       name: 'Following',
       component: Following
+    },
+    {
+      path: '/upload',
+      name: 'Upload',
+      component: Upload
     }
   ]
 })

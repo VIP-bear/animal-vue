@@ -8,6 +8,8 @@ import ArtWork from '@/pages/ArtWork.vue'
 import User from '@/pages/User.vue'
 import Following from '@/pages/Following.vue'
 import Upload from '@/pages/Upload.vue'
+import AttentionUserImage from '@/pages/AttentionUserImage.vue'
+import Tags from '@/pages/Tags.vue'
 
 Vue.use(Router)
 
@@ -54,6 +56,16 @@ export default new Router({
       path: '/upload',
       name: 'Upload',
       component: Upload
+    },
+    {
+      path: '/bookmark_new_image',
+      name: 'AttentionUserImage',
+      component: AttentionUserImage
+    },
+    {
+      path: '/tags/:tag',
+      name: 'Tags',
+      component: Tags
     }
   ]
 })

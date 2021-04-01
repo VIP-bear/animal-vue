@@ -6,7 +6,7 @@
         <el-row>
           <el-col :span="3" v-for="o in 8" :key="o" style="padding:2px;">
             <el-card :body-style="{ padding: '10px' }" shadow="hover" style="background-color: violet;">
-              <el-button class="btn-tag" type="text">标签{{o}}</el-button>
+              <el-button class="btn-tag" type="text" @click="searchTag(o)">标签{{o}}</el-button>
             </el-card>
           </el-col>
         </el-row>
@@ -31,7 +31,7 @@
       <div class="attention-contain">
         <div class="attention-title">
           <span>关注用户·好友图片</span>
-          <el-link :underline="false" style="margin-left:1200px">查看全部</el-link>
+          <el-link :underline="false" style="margin-left:1200px" @click.native="attentionUserImage">查看全部</el-link>
         </div>
         <el-col :span="4" v-for="o in 18" :key="o" style="margin-top:40px;">
           <el-card :body-style="{ padding: '80px' }" shadow="hover" class="img-card">
@@ -80,6 +80,12 @@ export default {
   methods: {
     recommandClick (index) {
       this.$router.push({path: '/artworks/' + index})
+    },
+    attentionUserImage () {
+      this.$router.push({path: '/bookmark_new_image'})
+    },
+    searchTag (tag) {
+      this.$router.push({path: '/tags/' + tag})
     }
   }
 }

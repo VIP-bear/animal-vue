@@ -24,7 +24,7 @@
         </span>
         <el-dropdown-menu slot="dropdown" class="dorpdown-menu">
           <div style="font-size:12px;margin:15px 0px 20px 20px;cursor: pointer;">
-            <el-avatar :size="60">User</el-avatar>
+            <el-avatar :size="60" @click.native="userMessage">User</el-avatar>
             <div>用户名</div>
             <div>@用户id</div>
             <div>
@@ -65,6 +65,10 @@ export default {
     },
     upload () {
       this.$router.push({path: '/upload'})
+    },
+    userMessage () {
+      let id = 1
+      this.$router.push({path: '/users/' + id})
     }
   }
 }

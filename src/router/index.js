@@ -10,6 +10,7 @@ import Following from '@/pages/Following.vue'
 import Upload from '@/pages/Upload.vue'
 import AttentionUserImage from '@/pages/AttentionUserImage.vue'
 import Tags from '@/pages/Tags.vue'
+import Message from '@/pages/Message.vue'
 
 Vue.use(Router)
 
@@ -66,6 +67,11 @@ export default new Router({
       path: '/tags/:tag',
       name: 'Tags',
       component: Tags
+    },
+    {
+      path: '/messages',
+      name: 'Message',
+      component: Message
     }
   ]
 })

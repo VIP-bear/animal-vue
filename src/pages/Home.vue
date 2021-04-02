@@ -11,11 +11,28 @@
           </el-col>
         </el-row>
       </div>
+      <div class="ranking">
+        <div class="ranking-title">
+          <span>排行榜</span>
+        </div>
+        <el-col :span="4" v-for="o in 18" :key="o" style="margin:20px 0px;" @click.native="recommandClick(o)">
+          <el-card :body-style="{ padding: '80px' }" shadow="hover" class="img-card">
+            排行榜图片{{o}}
+          </el-card>
+          <div>
+            <span>图片标题</span>
+          </div>
+          <div>
+            <span>用户头像</span>
+            <span>用户名</span>
+          </div>
+        </el-col>
+      </div>
       <div class="recommand-contain">
         <div class="recommand-title">
           <span>推荐图片</span>
         </div>
-        <el-col :span="4" v-for="o in 18" :key="o" style="margin-top:40px;" @click.native="recommandClick(o)">
+        <el-col :span="4" v-for="o in 18" :key="o" style="margin:20px 0px;" @click.native="recommandClick(o)">
           <el-card :body-style="{ padding: '80px' }" shadow="hover" class="img-card">
             推荐图片{{o}}
           </el-card>
@@ -33,7 +50,7 @@
           <span>关注用户·好友图片</span>
           <el-link :underline="false" style="margin-left:1200px" @click.native="attentionUserImage">查看全部</el-link>
         </div>
-        <el-col :span="4" v-for="o in 18" :key="o" style="margin-top:40px;">
+        <el-col :span="4" v-for="o in 18" :key="o" style="margin:20px 0px;">
           <el-card :body-style="{ padding: '80px' }" shadow="hover" class="img-card">
             关注用户图片{{o}}
           </el-card>
@@ -50,7 +67,7 @@
         <div class="user-title">
           <span>推荐用户</span>
         </div>
-        <el-col :span="4" v-for="o in 6" :key="o" style="margin-top:40px;">
+        <el-col :span="4" v-for="o in 6" :key="o" style="margin:20px 0px;">
           <el-card :body-style="{ padding: '80px' }" shadow="hover" class="img-card">
             推荐用户{{o}}
           </el-card>
@@ -93,24 +110,30 @@ export default {
 
 <style scoped>
 .main-msg {
-  transform: translate(0%, -50%);
   margin: 0px 200px;
 }
 .hot-tags {
   height: 60px;
+  margin-top: 50px;
   border-radius: 5px;
 }
 .btn-tag {
   font-size: 24px;
   color: white;
 }
-.recommand-contain {
-  margin-top: 60px;
+.ranking {
+  margin-top: 100px;
 }
-.recommand-title {
-  position: absolute;
+.ranking-title {
   font-size: 24px;
   font-weight: bold;
+  text-align: left;
+}
+.recommand-title {
+  text-align: left;
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 20px;
 }
 .img-card {
   border-radius: 10px;
@@ -119,19 +142,13 @@ export default {
   margin: 10px 10px;
   cursor: pointer;
 }
-.attention-contain {
-  margin-top: 1100px;
-}
 .attention-title {
-  position: absolute;
+  text-align: left;
   font-size: 24px;
   font-weight: bold;
 }
-.user-contain {
-  margin-top: 2150px;
-}
 .user-title {
-  position: absolute;
+  text-align: left;
   font-size: 24px;
   font-weight: bold;
 }

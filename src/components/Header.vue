@@ -16,7 +16,7 @@
     </div>
     <div v-if="isLogin" class="login-contain">
       <el-button class="btn-upload" type="info" round @click="upload">上传图片</el-button>
-      <el-button class="btn-leader" title="排行榜" type="text" circle></el-button>
+      <!-- <el-button class="btn-leader" title="排行榜" type="text" circle></el-button> -->
       <el-button class="btn-message" title="消息" type="text" circle></el-button>
       <el-dropdown trigger="click" class="dropdown">
         <span class="el-dropdown-link">
@@ -99,13 +99,13 @@ export default {
   margin-top: 15px;
   width: 100px;
 }
-.btn-leader {
+/* .btn-leader {
   width: 30px;
   height: 30px;
   margin-left: 30px;
   background: url("../assets/img/icon/icon-leader.png") no-repeat;
   background-size: cover;
-}
+} */
 .btn-message {
   width: 30px;
   height: 30px;
@@ -116,9 +116,8 @@ export default {
 .dropdown {
   cursor: pointer;
   color: #409EFF;
-  margin-top: 10px;
-  margin-right: 10px;
-  float:right;
+  margin: 10px 30px;
+  position: absolute;
 }
 .btn-login {
   cursor: pointer;

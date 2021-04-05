@@ -15,11 +15,11 @@
             v-model="loginData.password">
           </el-input>
         </el-form-item>
-        <el-form-item prop="nickname">
+        <el-form-item prop="username">
           <el-input
-            class="input-nickname"
-            placeholder="昵称/用户名"
-            v-model="loginData.nickname"
+            class="input-username"
+            placeholder="用户名"
+            v-model="loginData.username"
             @keyup.enter.native="submitForm()">
           </el-input>
         </el-form-item>
@@ -41,7 +41,7 @@ export default {
       loginData: {
         email: '',
         password: '',
-        nickname: ''
+        username: ''
       },
       rules: {
         email: [
@@ -52,8 +52,8 @@ export default {
           {required: true, message: '请输入密码', trigger: 'blur'},
           {type: 'number', message: '年龄必须为数字值', trigger: 'blur'}
         ],
-        nickname: [
-          {required: true, message: '', trigger: 'blur', min: 8, max: 16}
+        username: [
+          {required: true, message: '用户名不能为空', trigger: 'blur', min: 8, max: 16}
         ]
       }
     }
@@ -101,7 +101,7 @@ export default {
   font-size: 16px;
   margin-bottom: -10px;
 }
-.input-nickname {
+.input-username {
   width: 300px;
   height: 50px;
   font-size: 16px;

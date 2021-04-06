@@ -2,9 +2,9 @@
   <div class="wrapper">
     <div class="registor-contain">
       <div class="ms-title">animal</div>
-      <el-form :model="loginData" :rules="rules" ref="loginForm" class="ms-content">
+      <el-form :model="registerData" :rules="rules" ref="registerForm" class="ms-content">
         <el-form-item prop="email">
-          <el-input class="input-email" v-model="loginData.email" placeholder="邮箱地址">
+          <el-input class="input-email" v-model="registerData.email" placeholder="邮箱地址">
           </el-input>
         </el-form-item>
         <el-form-item prop="password">
@@ -12,20 +12,20 @@
             class="input-password"
             type="password"
             placeholder="密码"
-            v-model="loginData.password">
+            v-model="registerData.password">
           </el-input>
         </el-form-item>
         <el-form-item prop="username">
           <el-input
             class="input-username"
             placeholder="用户名"
-            v-model="loginData.username"
+            v-model="registerData.username"
             @keyup.enter.native="submitForm()">
           </el-input>
         </el-form-item>
       </el-form>
       <div>
-          <el-button class="btn-registor" round type="primary" @click="submitForm('loginForm')">注册用户</el-button>
+        <el-button :disabled="emailCheck || passwordCheck || usernameCheck" class="btn-registor" round type="primary" @click="registor">注册用户</el-button>
       </div>
       <el-divider direction="horizontal"></el-divider>
       <div class="ms-text">You never know how strong you are until being strong is your only choice.</div>
@@ -34,28 +34,103 @@
 </template>
 
 <script>
+import state from '../store/state'
 export default {
   name: 'Login',
   data () {
+    // 邮箱验证
+    var validateEmail = (rule, value, callback) => {
+      if (value.trim().length === 0) {
+        this.emailCheck = true
+        callback(new Error('用户名不能为空'))
+      }
+      var emailreg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+      if (!emailreg.test(value)) {
+        this.emailCheck = true
+        callback(new Error('请输入有效的邮箱'))
+      } else {
+        this.emailCheck = false
+        callback()
+      }
+    }
+    // 密码验证
+    var validatePassword = (rule, value, callback) => {
+      if (value === '') {
+        this.passwordCheck = true
+        callback(new Error('请输入密码'))
+      }
+      if (/[\u4E00-\u9FA5\s]/.test(value)) {
+        this.passwordCheck = true
+        callback(new Error('密码不能出现汉字、空格'))
+      }
+      var passwordreg = /(?=.*\d)(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{6,16}/
+      if (!passwordreg.test(value)) {
+        this.passwordCheck = true
+        callback(new Error('密码只能使用半角英文字母、数字和符号'))
+      } else {
+        this.passwordCheck = false
+        callback()
+      }
+    }
+    // 用户名验证
+    var validateUsername = (rule, value, callback) => {
+      if (value.trim().length === 0) {
+        this.usernameCheck = true
+        callback(new Error('用户名不能为空'))
+      } else {
+        this.usernameCheck = false
+        callback()
+      }
+    }
     return {
-      loginData: {
+      emailCheck: true,
+      passwordCheck: true,
+      usernameCheck: true,
+      registerData: {
         email: '',
         password: '',
         username: ''
       },
       rules: {
         email: [
-          {required: true, message: '请输入邮箱地址', trigger: 'blur'},
-          {type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur'}
+          {required: true, validator: validateEmail, trigger: 'blur'}
         ],
         password: [
-          {required: true, message: '请输入密码', trigger: 'blur'},
-          {type: 'number', message: '年龄必须为数字值', trigger: 'blur'}
+          {required: true, validator: validatePassword, trigger: 'blur'}
         ],
         username: [
-          {required: true, message: '用户名不能为空', trigger: 'blur', min: 8, max: 16}
+          {required: true, validator: validateUsername, trigger: 'blur'}
         ]
       }
+    }
+  },
+  methods: {
+    // 注册
+    registor () {
+      const _this = this
+      this.$axios.post(state.domain + '/user/register', JSON.stringify(this.registerData), {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(function (response) {
+        if (response.data.code === 200) {
+          state.hasLogin = true
+          state.userMessage = response.data.data
+          // 注册成功
+          _this.$notify({
+            title: '注册成功',
+            message: '欢迎!',
+            type: 'success'
+          })
+          _this.$router.push({path: '/home'})
+        } else {
+          // 注册失败
+          _this.$notify.error({
+            title: '注册失败',
+            message: response.data.message
+          })
+        }
+      })
     }
   }
 }

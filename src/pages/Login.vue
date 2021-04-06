@@ -75,10 +75,22 @@ export default {
           'Content-Type': 'application/json'
         }
       }).then(function (response) {
-        if (response.data.code === '200') {
-          _this.$router.push({path: '/registor'})
+        if (response.data.code === 200) {
+          state.hasLogin = true
+          state.userMessage = response.data.data
+          // 登录成功
+          _this.$notify({
+            title: '登录成功',
+            message: '欢迎回来!',
+            type: 'success'
+          })
+          _this.$router.push({path: '/home'})
         } else {
-          alert(response.data.message)
+          // 登录失败
+          _this.$notify.error({
+            title: '登录失败',
+            message: response.data.message
+          })
         }
       })
     }

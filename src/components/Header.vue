@@ -20,16 +20,16 @@
       <el-button class="btn-message" title="消息" type="text" circle></el-button>
       <el-dropdown trigger="click" class="dropdown">
         <span class="el-dropdown-link">
-          <el-avatar :size="50">User</el-avatar>
+          <el-avatar :size="50">{{userMessage.username}}</el-avatar>
         </span>
         <el-dropdown-menu slot="dropdown" class="dorpdown-menu">
           <div style="font-size:12px;margin:15px 0px 20px 20px;cursor: pointer;">
-            <el-avatar :size="60" @click.native="userMessage">User</el-avatar>
-            <div>用户名</div>
-            <div>@用户id</div>
+            <el-avatar :size="60" @click.native="userPage">{{userMessage.username}}</el-avatar>
+            <div>{{userMessage.username}}</div>
+            <div>@{{userMessage.email}}</div>
             <div>
-              <el-button type="text" @click="following">关注 200</el-button>
-              <el-button type="text">粉丝 100</el-button>
+              <el-button type="text" @click="following">关注 {{userMessage.attention_count}}</el-button>
+              <el-button type="text">粉丝 {{userMessage.follow_count}}</el-button>
             </div>
           </div>
           <el-dropdown-item style="font-size:16px;margin-top:5px;" icon="el-icon-star-off">收藏</el-dropdown-item>
@@ -48,27 +48,26 @@
 </template>
 
 <script>
+import state from '../store/state'
 export default {
   name: 'Header',
   data () {
     return {
       isCollapse: false,
       input_content: '',
-      isLogin: true
+      isLogin: state.hasLogin,
+      userMessage: state.userMessage
     }
   },
   methods: {
     following () {
-      // let id = this.$route.params.id
-      let id = 1
-      this.$router.push({path: '/users/' + id + '/following'})
+      this.$router.push({path: '/users/' + this.userMessage.user_id + '/following'})
     },
     upload () {
       this.$router.push({path: '/upload'})
     },
-    userMessage () {
-      let id = 1
-      this.$router.push({path: '/users/' + id})
+    userPage () {
+      this.$router.push({path: '/users/' + this.userMessage.user_id})
     }
   }
 }

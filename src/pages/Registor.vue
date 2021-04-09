@@ -12,7 +12,7 @@
             class="input-password"
             type="password"
             placeholder="密码"
-            v-model="registerData.password">
+            v-model="registerData.password" show-password>
           </el-input>
         </el-form-item>
         <el-form-item prop="username">

@@ -5,10 +5,11 @@
       <el-upload
         action="#"
         list-type="picture-card"
-        limit="1"
+        :limit="1"
         :on-change="uploadSuccess"
         :on-remove="removeSuccess"
         accept="image/jpg,image/png,image/jpeg"
+        :data="this.imageMsg"
         :auto-upload="false">
         <i slot="default" class="el-icon-plus"></i>
         <div slot="tip" style="font-size:12px; color: white;" class="el-upload__tip">只能上传jpg/png文件，且不超过10MB</div>
@@ -18,7 +19,7 @@
       <div class="image-msg">
         <el-input
           placeholder="标题"
-          v-model="imageTitle"
+          v-model="imageMsg.image_title"
           maxlength="30"
           show-word-limit
           clearable>
@@ -26,7 +27,7 @@
         <el-input
           type="textarea"
           placeholder="说明"
-          v-model="imageDesc"
+          v-model="imageMsg.image_description"
           maxlength="300"
           rows="6"
           show-word-limit>
@@ -45,7 +46,7 @@
           <el-input
             class="input-new-tag"
             v-if="inputVisible"
-            v-model="inputValue"
+            v-model="inputTag"
             ref="saveTagInput"
             size="small"
             @keyup.enter.native="handleInputConfirm"
@@ -67,7 +68,7 @@
           <i class="el-icon-warning"></i>
           违反作品投稿利用规则的用户，将会被停止投稿作品公开，停止账号使用。
         </div>
-        <el-button class="upload-btn" type="primary" round>投稿</el-button>
+        <el-button :disabled="dynamicTags==''||imageMsg.image==''" class="upload-btn" type="primary" round @click="upload">投稿</el-button>
       </div>
     </div>
   </div>
@@ -75,30 +76,39 @@
 
 <script>
 import Header from '../components/Header.vue'
+import state from '../store/state'
 export default {
   components: { Header },
   name: 'Upload',
   data () {
     return {
-      uploadImage: '',
       msg: 'animal',
-      dialogImageUrl: '',
-      imageTitle: '',
-      imageDesc: '',
+      imageMsg: {
+        user_id: state.userMessage.user_id,
+        image_title: '',
+        image_description: '',
+        image_tags: '',
+        image: ''
+      },
       dynamicTags: [],
       recommendTags: ['推荐标签1', '推荐标签2', '推荐标签3', '推荐标签4', '推荐标签5', '推荐标签6', '推荐标签7', '推荐标签8', '推荐标签9', '推荐标签10'],
       inputVisible: false,
-      inputValue: ''
+      inputTag: ''
     }
   },
   methods: {
     // 选择图片成功时触发
-    uploadSuccess (response, file, fileList) {
-      this.uploadImage = file
+    uploadSuccess (file, fileList) {
+      // 图片转base64
+      let reader = new FileReader()
+      reader.readAsDataURL(file.raw)
+      reader.onload = e => {
+        this.imageMsg.image = e.target.result
+      }
     },
     // 移除图片时触发
     removeSuccess (file, fileList) {
-      this.uploadImage = ''
+      this.imageMsg.image = ''
     },
     handleClose (tag) {
       this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1)
@@ -110,15 +120,40 @@ export default {
       })
     },
     handleInputConfirm () {
-      let inputValue = this.inputValue
+      let inputValue = this.inputTag
       if (inputValue) {
         this.dynamicTags.push(inputValue)
       }
       this.inputVisible = false
-      this.inputValue = ''
+      this.inputTag = ''
     },
     addToTags (tag) {
       this.dynamicTags.push(tag)
+    },
+    // 上传图片
+    upload () {
+      for (const tag of this.dynamicTags) {
+        this.imageMsg.image_tags += tag + '#'
+      }
+      const _this = this
+      this.$axios.post(state.domain + '/image/upload', this.imageMsg).then(function (response) {
+        if (response.data.code === 200) {
+          state.hasLogin = true
+          // 上传成功
+          _this.$notify({
+            title: '操作成功',
+            message: '投稿成功',
+            type: 'success'
+          })
+          _this.$router.push({path: '/home'})
+        } else {
+          // 注册失败
+          _this.$notify.error({
+            title: '操作失败',
+            message: response.data.message
+          })
+        }
+      })
     }
   }
 }

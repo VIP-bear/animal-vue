@@ -6,15 +6,17 @@
       <div style="background-color:rgb(241, 238, 238);">
         <div>
           <!-- 图片 -->
-          <el-image
-            class="image"
-            :src="url"
-            :fit="fit">
-          </el-image>
+          <div style="width:1000px; margin-left:25%; background-color: rgb(240, 245, 240);">
+            <el-image
+              class="image"
+              :src="imageMessage.image.image_url"
+              :fit="contain">
+            </el-image>
+          </div>
           <!-- 右侧用户信息 -->
           <div class="user-msg">
-            <el-avatar> user </el-avatar>
-            <el-link :underline="false" class="user-name">用户名</el-link>
+            <el-avatar> {{imageMessage.user.username}} </el-avatar>
+            <el-link :underline="false" class="user-name">{{imageMessage.user.username}}</el-link>
             <br />
             <el-button class="user-attention" round>关注</el-button>
             <div>
@@ -22,34 +24,33 @@
               <el-link :underline="false" class="all-image">全部图片</el-link>
             </div>
             <div class="user-image">
-              <el-col :span="8" v-for="o in 6" :key="o">
+              <el-col :span="8" v-for="imageUrl in imageMessage.urls" :key="imageUrl">
                 <el-image
                   style="width: 80px; height: 80px; cursor: pointer;"
-                  :src="url"
-                  :fit="fill">
-                  {{o}}
+                  :src="imageUrl"
+                  :fit="cover">
                 </el-image>
               </el-col>
             </div>
-            <span class="image-title">图片标题</span>
+            <span class="image-title">{{imageMessage.image.image_title}}</span>
             <div class="image-tags">
               <el-tag
-                v-for="item in items"
-                :key="item.label"
+                v-for="tag in imageMessage.tags"
+                :key="tag"
                 class="tag-item"
                 type="info"
                 effect="dark">
-                {{ item.label }}
+                {{ tag }}
               </el-tag>
             </div>
             <div class="image-desc">
-              图片描述信息。。。巴拉巴拉巴拉巴拉巴拉巴拉巴拉。。。。。
+              {{imageMessage.image.image_description}}
             </div>
             <div>
               <div class="image-number">
-                <i class="el-icon-view">100</i>
-                <i class="el-icon-thumb" style="margin-left:20px;">15</i>
-                <i class="el-icon-star-on" style="margin-left:20px;">30</i>
+                <i class="el-icon-view">{{imageMessage.image.image_view_count}}</i>
+                <i class="el-icon-thumb" style="margin-left:20px;">{{imageMessage.image.image_like_count}}</i>
+                <i class="el-icon-star-on" style="margin-left:20px;">{{imageMessage.image.image_favorites_count}}</i>
               </div>
               <div class="image-time">{{uploadTime}}</div>
             </div>
@@ -108,27 +109,47 @@
 
 <script>
 import Header from '../components/Header.vue'
+import state from '../store/state'
 export default {
   components: { Header },
   name: 'ArtWork',
   data () {
     return {
       msg: 'animal',
+      imageMessage: [],
       commentNum: 10,
       relatedImageNum: 20,
-      items: [
-        {label: '标签1'},
-        {label: '标签2'},
-        {label: '标签3'},
-        {label: '标签4'},
-        {label: '标签5'},
-        {label: '标签6'},
-        {label: '标签7'},
-        {label: '标签8'},
-        {label: '标签9'}
-      ],
-      uploadTime: '2021/3/18 11:03',
+      image_id: -1,
+      user_id: -1,
+      uploadTime: '',
       favorite: true
+    }
+  },
+  created () {
+    this.image_id = this.$route.params.id
+    this.user_id = state.userMessage.user_id
+    // 获取图片信息
+    const _this = this
+    this.$axios.get(state.domain + '/image/' + this.image_id + '/' + this.user_id).then(function (response) {
+      if (response.data.code === 200) {
+        _this.imageMessage = response.data.data
+        _this.formatDate()
+        console.log(_this.rankingMessage)
+      } else {
+        // 获取信息失败
+        _this.$notify.error({
+          title: '获取图片信息失败',
+          message: response.data.message
+        })
+      }
+    })
+  },
+  methods: {
+    // 格式化时间
+    formatDate () {
+      let date = new Date(this.imageMessage.image.image_upload_time)
+      this.uploadTime += date.getFullYear() + '/' + date.getMonth() + '/' + date.getDate() + ' '
+      this.uploadTime += date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
     }
   }
 }
@@ -141,8 +162,7 @@ export default {
 }
 .image {
   margin-top: 10px;
-  width: 1000px;
-  height: 800px;
+  height: 50%;
   border-radius: 10px;
 }
 .user-msg {
@@ -192,10 +212,10 @@ export default {
   text-align: left;
 }
 .tag-item {
-  width: 75px;
   height: 40px;
   margin: 5px 5px 0px 0px;
   text-align: center;
+  padding-top: 5px;
   cursor: pointer;
 }
 .image-desc {
@@ -210,7 +230,7 @@ export default {
   width: 250px;
   position: absolute;
   margin-top: 100px;
-  margin-left: -10px;
+  margin-left: -30px;
   font-size: 14px;
 }
 .image-time {

@@ -16,7 +16,7 @@
             type="password"
             placeholder="密码"
             v-model="loginData.password"
-            @keyup.enter.native="login">
+            @keyup.enter.native="login" show-password>
           </el-input>
         </el-form-item>
       </el-form>

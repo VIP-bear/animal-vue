@@ -20,11 +20,13 @@
             <el-avatar class="ranking-top">{{index+1}}</el-avatar>
             <img :src="image.image_url" class="image">
           </el-card>
-          <div>
-            <span>{{image.image_title}}</span>
-          </div>
-          <div>
-            <span>{{image.user.username}}</span>
+          <div style="height:40px;text-align:left; margin-left:10px;font-size:16px;">
+            <div style="font-weight:bold;">
+              <span>{{image.image_title}}</span>
+            </div>
+            <div>
+              <span>{{image.user.username}}</span>
+            </div>
           </div>
         </el-col>
       </div>
@@ -32,34 +34,36 @@
         <div class="recommand-title">
           <span>推荐图片</span>
         </div>
-        <el-col :span="4" v-for="o in 18" :key="o" style="margin:20px 0px;" @click.native="recommandClick(o)">
-          <el-card :body-style="{ padding: '80px' }" shadow="hover" class="img-card">
-            推荐图片{{o}}
+        <el-col :span="4" v-for="image in recommendImage" :key="image" style="margin:20px 0px;" @click.native="recommandClick(image.image_id)">
+          <el-card :body-style="{ padding: '0px' }" shadow="hover" class="img-card">
+            <img :src="image.image_url" class="image">
           </el-card>
-          <div>
-            <span>图片标题</span>
-          </div>
-          <div>
-            <span>用户头像</span>
-            <span>用户名</span>
+          <div style="height:40px;text-align:left; margin-left:10px;font-size:16px;">
+            <div style="font-weight:bold;">
+              <span>{{image.image_title}}</span>
+            </div>
+            <div>
+              <span>{{image.user.username}}</span>
+            </div>
           </div>
         </el-col>
       </div>
       <div class="attention-contain" style="float:left;">
         <div class="attention-title">
-          <span>关注用户·好友图片</span>
-          <el-link :underline="false" style="margin-left:1200px" @click.native="attentionUserImage">查看全部</el-link>
+          <span>关注用户图片</span>
+          <el-link :underline="false" style="margin-left:1200px" @click.native="allUserImage">查看全部</el-link>
         </div>
-        <el-col :span="4" v-for="o in 18" :key="o" style="margin:20px 0px;">
-          <el-card :body-style="{ padding: '80px' }" shadow="hover" class="img-card">
-            关注用户图片{{o}}
+        <el-col :span="4" v-for="image in attentionUserImage" :key="image" style="margin:20px 0px;" @click.native="recommandClick(image.image_id)">
+          <el-card :body-style="{ padding: '0px' }" shadow="hover" class="img-card">
+            <img :src="image.image_url" class="image">
           </el-card>
-          <div>
-            <span>图片标题</span>
-          </div>
-          <div>
-            <span>用户头像</span>
-            <span>用户名</span>
+          <div style="height:40px;text-align:left; margin-left:10px;font-size:16px;">
+            <div style="font-weight:bold;">
+              <span>{{image.image_title}}</span>
+            </div>
+            <div>
+              <span>{{image.user.username}}</span>
+            </div>
           </div>
         </el-col>
       </div>
@@ -93,10 +97,15 @@ export default {
   data () {
     return {
       msg: 'animal',
-      rankingMessage: state.rankingMessage
+      user_id: '',
+      rankingMessage: state.rankingMessage,
+      recommendImage: [],
+      attentionUserImage: []
     }
   },
   created () {
+    state.userMessage = JSON.parse(sessionStorage.getItem('userMessage'))
+    this.user_id = state.userMessage.user_id
     // 获取排行榜
     const _this = this
     this.$axios.get(state.domain + '/image/ranking').then(function (response) {
@@ -112,12 +121,40 @@ export default {
         })
       }
     })
+    // 获取推荐图片
+    this.$axios.get(state.domain + '/image/recommend/' + this.user_id).then(function (response) {
+      if (response.data.code === 200) {
+        state.recommendImage = response.data.data
+        _this.recommendImage = response.data.data
+        console.log(_this.recommendImage)
+      } else {
+        // 获取排行榜信息失败
+        _this.$notify.error({
+          title: '获取排行榜信息失败',
+          message: response.data.message
+        })
+      }
+    })
+    // 获取关注用户图片
+    this.$axios.get(state.domain + '/image/attention/' + this.user_id).then(function (response) {
+      if (response.data.code === 200) {
+        state.attentionUserImage = response.data.data
+        _this.attentionUserImage = response.data.data
+        console.log(_this.attentionUserImage)
+      } else {
+        // 获取关注用户图片信息失败
+        _this.$notify.error({
+          title: '获取关注用户图片信息失败',
+          message: response.data.message
+        })
+      }
+    })
   },
   methods: {
     recommandClick (index) {
       this.$router.push({path: '/artworks/' + index})
     },
-    attentionUserImage () {
+    allUserImage () {
       this.$router.push({path: '/bookmark_new_image'})
     },
     searchTag (tag) {

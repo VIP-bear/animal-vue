@@ -34,7 +34,7 @@
           <el-dropdown-item style="font-size:16px;margin-top:5px;" icon="el-icon-star-off">收藏</el-dropdown-item>
           <el-dropdown-item style="font-size:16px;margin-top:5px;" icon="el-icon-bell">通知</el-dropdown-item>
           <el-dropdown-item style="font-size:16px;margin-top:5px;" icon="el-icon-setting">设置</el-dropdown-item>
-          <el-dropdown-item style="font-size:16px;margin-top:5px;" icon="el-icon-close">退出登录</el-dropdown-item>
+          <el-dropdown-item style="font-size:16px;margin-top:5px;" icon="el-icon-close" @click.native="signOut">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -59,6 +59,12 @@ export default {
       loginText: '登录'
     }
   },
+  created () {
+    state.userMessage = JSON.parse(sessionStorage.getItem('userMessage'))
+    state.hasLogin = sessionStorage.getItem('hasLogin')
+    this.userMessage = state.userMessage
+    this.isLogin = state.hasLogin
+  },
   methods: {
     following () {
       this.$router.push({path: '/users/' + this.userMessage.user_id + '/following'})
@@ -71,6 +77,10 @@ export default {
     },
     login () {
       this.$router.push({path: '/login'})
+    },
+    // 退出登录
+    signOut () {
+      this.$router.push({path: '/'})
     }
   }
 }

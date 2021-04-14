@@ -4,9 +4,9 @@
     <Header></Header>
     <div class="main-msg">
       <div style="background-color:rgb(241, 238, 238);">
-        <div>
+        <div style="width:100%">
           <!-- 图片 -->
-          <div style="width:1000px; margin-left:25%; background-color: rgb(240, 245, 240);">
+          <div style="width:1000px; margin-left:25%; background-color: rgb(240, 245, 240);float:left;">
             <el-image
               class="image"
               :src="imageMessage.image.image_url"
@@ -17,9 +17,8 @@
           <div class="user-msg">
             <el-avatar> {{imageMessage.user.username}} </el-avatar>
             <el-link :underline="false" class="user-name">{{imageMessage.user.username}}</el-link>
-            <br />
-            <el-button class="user-attention" round>关注</el-button>
-            <div>
+            <el-button class="user-attention" round @click="attentionUser">{{attention ? '已关注' : '关注'}}</el-button>
+            <div style="margin:40px 0px 0px 10px;">
               <span class="other-image">其他图片</span>
               <el-link :underline="false" class="all-image">全部图片</el-link>
             </div>
@@ -32,7 +31,9 @@
                 </el-image>
               </el-col>
             </div>
-            <span class="image-title">{{imageMessage.image.image_title}}</span>
+            <div class="image-title">
+              {{imageMessage.image.image_title}}
+            </div>
             <div class="image-tags">
               <el-tag
                 v-for="tag in imageMessage.tags"
@@ -59,8 +60,8 @@
         <!-- 用户操作（点赞、收藏、更多） -->
         <div class="imag-operate">
           <el-button style="font-size:16px;" type="text" icon="el-icon-thumb">赞!</el-button>
-          <el-button v-if="favorite" style="font-size:16px;" type="text" icon="el-icon-star-on" @click="favorite=false">已收藏</el-button>
-          <el-button v-else style="font-size:16px;" type="text" icon="el-icon-star-off" @click="favorite=true">收藏</el-button>
+          <el-button v-if="favorites" style="font-size:16px;" type="text" icon="el-icon-star-on" @click="favoritesImage">已收藏</el-button>
+          <el-button v-else style="font-size:16px;" type="text" icon="el-icon-star-off" @click="favoritesImage">收藏</el-button>
           <el-button style="font-size:16px; margin-right:10px;" type="text" icon="el-icon-more">更多</el-button>
         </div>
         <!-- 评论 -->
@@ -68,19 +69,19 @@
           <div style="text-align: left;margin:0px 150px;padding-top:30px;">
             评论
             <div style="margin-top:15px;width:800px;">
-              <el-avatar> user </el-avatar>
-              <el-input class="comment-input" v-model="input" placeholder="发表评论"></el-input>
-              <el-button class="comment-publish" type="primary" round>发布</el-button>
+              <el-avatar> {{username}} </el-avatar>
+              <el-input class="comment-input" v-model="inputComment" placeholder="发表评论"></el-input>
+              <el-button class="comment-publish" type="primary" round @click="pulishComment">发布</el-button>
             </div>
             <div style="margin-top:20px;width:800px;">
-              <div style="height:80px;" v-for="index in commentNum" :key="index">
-                <el-avatar style="margin-top:20px;"> user </el-avatar>
-                <span style="margin-right:20px;font-size:12px;">用户{{index}}</span>
-                评论的内容{{index}}
+              <div style="height:80px;" v-for="comment in commentList" :key="comment">
+                <el-avatar style="margin-top:20px;"> {{comment.user.username}} </el-avatar>
+                <span style="margin-right:20px;font-size:12px;">{{comment.user.username}}</span>
+                {{comment.comment_content}}
                 <span style="float:right;font-size:14px;margin-top:15px;">{{uploadTime}}</span>
               </div>
             </div>
-            <el-button class="load-comment" type="info" round @click="commentNum+=5">浏览更多</el-button>
+            <el-button class="load-comment" type="info" round @click="offset+=5">浏览更多</el-button>
           </div>
         </div>
         <!-- 相关图片 -->
@@ -116,25 +117,32 @@ export default {
   data () {
     return {
       msg: 'animal',
+      relatedImageNum: 10,
       imageMessage: [],
-      commentNum: 10,
-      relatedImageNum: 20,
       image_id: -1,
       user_id: -1,
+      username: '',
       uploadTime: '',
-      favorite: true
+      favorites: false,
+      attention: false,
+      inputComment: '',
+      commentList: [],
+      offset: 0,
+      size: 5
     }
   },
   created () {
     this.image_id = this.$route.params.id
     this.user_id = state.userMessage.user_id
+    this.username = state.userMessage.username
     // 获取图片信息
     const _this = this
     this.$axios.get(state.domain + '/image/' + this.image_id + '/' + this.user_id).then(function (response) {
       if (response.data.code === 200) {
         _this.imageMessage = response.data.data
         _this.formatDate()
-        console.log(_this.rankingMessage)
+        _this.favorites = _this.imageMessage.favorites
+        _this.attention = _this.imageMessage.attention
       } else {
         // 获取信息失败
         _this.$notify.error({
@@ -143,6 +151,8 @@ export default {
         })
       }
     })
+    // 获取评论
+    this.getComment()
   },
   methods: {
     // 格式化时间
@@ -150,6 +160,80 @@ export default {
       let date = new Date(this.imageMessage.image.image_upload_time)
       this.uploadTime += date.getFullYear() + '/' + date.getMonth() + '/' + date.getDate() + ' '
       this.uploadTime += date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
+    },
+    // 关注用户
+    attentionUser () {
+      this.attention = !this.attention
+      const _this = this
+      let data = {'image_id': this.image_id, 'user_id': this.user_id, 'attention_user_id': this.imageMessage.user.user_id, 'state': this.attention ? 1 : 0}
+      this.$axios.post(state.domain + '/user/attention', data).then(function (response) {
+        if (response.data.code === 200) {
+          _this.$notify({
+            title: '操作成功',
+            message: '操作成功',
+            type: 'success'
+          })
+        } else {
+          // 发表评论失败
+          _this.$notify.error({
+            title: '关注失败',
+            message: response.data.message
+          })
+        }
+      })
+    },
+    // 获取评论
+    getComment () {
+      const _this = this
+      this.$axios.get(state.domain + '/comment/' + this.image_id + '/' + this.offset + '/' + this.size).then(function (response) {
+        if (response.data.code === 200) {
+          _this.commentList = _this.commentList.concat(response.data.data)
+          console.log(response.data.data)
+        } else {
+          // 获取信息失败
+          _this.$notify.error({
+            title: '获取评论信息失败',
+            message: response.data.message
+          })
+        }
+      })
+    },
+    // 发表评论
+    pulishComment () {
+      const _this = this
+      let data = {'image_id': this.image_id, 'user_id': this.user_id, 'comment_content': this.inputComment}
+      if (this.inputComment !== '') {
+        this.$axios.post(state.domain + '/comment/publish', data).then(function (response) {
+          if (response.data.code === 200) {
+            _this.commentList.unshift(response.data.data)
+            console.log('res:' + response.data.data)
+            _this.inputComment = ''
+          } else {
+            // 发表评论失败
+            _this.$notify.error({
+              title: '评论失败',
+              message: response.data.message
+            })
+          }
+        })
+      }
+    },
+    favoritesImage () {
+      this.favorites = !this.favorites
+      let flag = this.favorites ? '1' : '0'
+      const _this = this
+      this.$axios.get(state.domain + '/image/favorites/' + this.image_id + '/' + this.user_id + '/' + flag).then(function (response) {
+        if (response.data.code === 200) {
+          _this.commentList = _this.commentList.concat(response.data.data)
+          console.log(response.data.data)
+        } else {
+          // 获取信息失败
+          _this.$notify.error({
+            title: '获取评论信息失败',
+            message: response.data.message
+          })
+        }
+      })
     }
   }
 }
@@ -166,10 +250,11 @@ export default {
   border-radius: 10px;
 }
 .user-msg {
-  width: 200px;
-  height: 200px;
+  width: 300px;
   margin-left: 75%;
-  margin-top: -40%;
+  padding-top: 10px;
+  padding-left: 20px;
+  text-align: left;
 }
 .user-name {
   margin-left: 10px;
@@ -178,38 +263,30 @@ export default {
 }
 .user-attention {
   width: 250px;
-  margin-left: 40px;
 }
 .other-image {
-  position: absolute;
-  margin-left: -55px;
-  margin-top: 60px;
   font-size: 12px;
 }
 .all-image {
-  position: absolute;
   margin-left: 140px;
-  margin-top: 60px;
   font-size: 12px;
   color: rgb(201, 197, 197)
 }
 .user-image {
   width: 250px;
-  margin-left: 40px;
-  margin-top: 90px;
+  margin-left: 10px;
+  margin-top: 10px;
 }
 .image-title {
-  position: absolute;
-  margin-top: 220px;
-  margin-left: -250px;
-  font-size: 24px;
+  margin-top: 250px;
+  margin-left: 10px;
+  font-size: 20px;
   font-weight: bold;
 }
 .image-tags {
-  margin-top: 350px;
-  margin-left: 40px;
+  margin-top: 10px;
+  margin-left: 10px;
   width: 250px;
-  text-align: left;
 }
 .tag-item {
   height: 40px;
@@ -221,28 +298,26 @@ export default {
 .image-desc {
   word-break:break-all;
   word-wrap:break-word;
-  margin-left: 40px;
-  margin-top: 30px;
+  margin-left: 10px;
+  margin-top: 10px;
   width: 250px;
   text-align: left;
 }
 .image-number {
   width: 250px;
-  position: absolute;
   margin-top: 100px;
-  margin-left: -30px;
+  margin-left: 10px;
   font-size: 14px;
 }
 .image-time {
-  position: absolute;
   width: 250px;
-  margin-left: -30px;
-  margin-top: 120px;
+  margin-left: 10px;
+  margin-top: 10px;
   font-size: 14px;
 }
 .imag-operate {
   width: 1000px;
-  margin-top: 600px;
+  margin-top: 10px;
   margin-left: 25%;
   text-align: right;
   background-color:white;

@@ -64,6 +64,11 @@ export default {
       }
     }
   },
+  created () {
+    if (sessionStorage.getItem('loginData')) {
+      this.loginData = JSON.parse(sessionStorage.getItem('loginData'))
+    }
+  },
   methods: {
     registor () {
       this.$router.push({path: '/registor'})
@@ -78,6 +83,10 @@ export default {
         if (response.data.code === 200) {
           state.hasLogin = true
           state.userMessage = response.data.data
+          // 保存用户信息
+          sessionStorage.setItem('userMessage', JSON.stringify(response.data.data))
+          sessionStorage.setItem('hasLogin', true)
+          sessionStorage.setItem('loginData', JSON.stringify(_this.loginData))
           // 登录成功
           _this.$notify({
             title: '登录成功',

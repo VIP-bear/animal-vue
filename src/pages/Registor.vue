@@ -116,6 +116,9 @@ export default {
         if (response.data.code === 200) {
           state.hasLogin = true
           state.userMessage = response.data.data
+          // 保存用户信息
+          sessionStorage.setItem('userMessage', JSON.stringify(response.data.data))
+          sessionStorage.setItem('hasLogin', true)
           // 注册成功
           _this.$notify({
             title: '注册成功',

@@ -4,23 +4,23 @@
     <el-button class="bg-image" type="info" plain>背景图片</el-button>
     <div class="main-msg">
       <div class="user-msg">
-        <el-avatar :size="120" class="user-header"> user </el-avatar>
-        <span class="user-name">用户名</span>
-        <div class="attention-num">关注 100</div>
-        <div class="attention-usr-msg" v-for="index in userNum" :key="index">
-          <el-avatar :size="80"> user </el-avatar>
-          <span style="position: absolute; margin-left: 10px;">用户名</span>
-          <span class="user-desc">用户描述信息巴拉巴拉巴拉巴拉巴拉巴拉巴拉巴拉</span>
+        <el-avatar :size="120" class="user-header"> {{userMessage.username}} </el-avatar>
+        <span class="user-name">{{userMessage.username}}</span>
+        <div class="attention-num">关注 {{userMessage.attention_count}}</div>
+        <div class="attention-usr-msg" v-for="attention in userList" :key="attention">
+          <el-avatar :size="80"> {{attention.user.username}} </el-avatar>
+          <span style="position: absolute; margin-left: 10px;">{{attention.user.username}}</span>
+          <span class="user-desc">{{attention.user.user_introduction}}</span>
           <el-button class="user-attention" round>已关注</el-button>
           <div class="user-images">
-            <el-col :span="6" v-for="o in 4" :key="o">
-              <el-card shadow="hover" class="img-card">
-                用户图片{{o}}
+            <el-col :span="6" v-for="image in attention.imageList" :key="image" @click.native="recommandClick(image.image_id)">
+              <el-card :body-style="{ padding: '0px' }" shadow="hover" class="img-card">
+                <img :src="image.image_url" class="image">
               </el-card>
-              <span>图片标题</span>
+              <span>{{image.image_title}}</span>
             </el-col>
           </div>
-          <div style="margin-top:150px;">
+          <div style="margin-top:180px;">
             <el-divider></el-divider>
           </div>
         </div>
@@ -32,13 +32,37 @@
 
 <script>
 import Header from '../components/Header.vue'
+import state from '../store/state'
 export default {
   components: { Header },
   name: 'Following',
   data () {
     return {
       msg: 'animal',
-      userNum: 10
+      userMessage: [],
+      userList: []
+    }
+  },
+  created () {
+    this.userMessage = state.userMessage
+    // 获取关注列表
+    let offset = this.userList.length
+    const _this = this
+    this.$axios.get(state.domain + '/user/attention_list/' + this.userMessage.user_id + '/' + offset).then(function (response) {
+      if (response.data.code === 200) {
+        _this.userList = response.data.data
+      } else {
+        // 获取信息失败
+        _this.$notify.error({
+          title: '获取关注列表信息失败',
+          message: response.data.message
+        })
+      }
+    })
+  },
+  methods: {
+    recommandClick (index) {
+      this.$router.push({path: '/artworks/' + index})
     }
   }
 }
@@ -58,6 +82,7 @@ export default {
 }
 .user-header {
   margin-top: -20px;
+  font-size: 24px;
 }
 .attention-num {
   background-color: rgb(240, 235, 235);
@@ -91,12 +116,17 @@ export default {
 }
 .img-card {
   border-radius: 10px;
-  height: 180px;
-  width: 180px;
-  margin-left: 10px;
+  height: 200px;
+  width: 200px;
+  margin: 10px;
+  cursor: pointer;
 }
 .load-image {
   margin: 20px 0px;
   width: 1000px;
+}
+.image {
+  width: 100%;
+  display: block;
 }
 </style>

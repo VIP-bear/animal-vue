@@ -11,6 +11,7 @@ import Upload from '@/pages/Upload.vue'
 import AttentionUserImage from '@/pages/AttentionUserImage.vue'
 import Tags from '@/pages/Tags.vue'
 import Message from '@/pages/Message.vue'
+import Bookmarks from '@/pages/Bookmarks.vue'
 
 Vue.use(Router)
 
@@ -52,6 +53,11 @@ export default new Router({
       path: '/users/:id/following',
       name: 'Following',
       component: Following
+    },
+    {
+      path: '/users/:id/bookmarks',
+      name: 'Bookmarks',
+      component: Bookmarks
     },
     {
       path: '/upload',

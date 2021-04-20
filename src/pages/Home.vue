@@ -34,15 +34,15 @@
         <div class="recommand-title">
           <span>推荐图片</span>
         </div>
-        <el-col :span="4" v-for="image in recommendImage" :key="image" style="margin:20px 0px;" @click.native="recommandClick(image.image_id)">
-          <el-card :body-style="{ padding: '0px' }" shadow="hover" class="img-card">
+        <el-col :span="4" v-for="image in recommendImage" :key="image" style="margin:20px 0px;">
+          <el-card :body-style="{ padding: '0px' }" shadow="hover" class="img-card" @click.native="recommandClick(image.image_id)">
             <img :src="image.image_url" class="image">
           </el-card>
           <div style="height:40px;text-align:left; margin-left:10px;font-size:16px;">
             <div style="font-weight:bold;">
               <span>{{image.image_title}}</span>
             </div>
-            <div>
+            <div style="cursor: pointer; float:left" @click="jumpToUser(image.user.user_id)">
               <span>{{image.user.username}}</span>
             </div>
           </div>
@@ -151,6 +151,9 @@ export default {
     })
   },
   methods: {
+    jumpToUser (userId) {
+      this.$router.push({path: '/users/' + userId})
+    },
     recommandClick (index) {
       this.$router.push({path: '/artworks/' + index})
     },

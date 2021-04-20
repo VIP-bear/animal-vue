@@ -6,15 +6,23 @@
       <div class="user-msg">
         <el-avatar :size="120" class="user-header"> {{this.userMessage.username}} </el-avatar>
         <span class="user-name">{{this.userMessage.username}}</span>
-        <el-button class="user-attention" type="text" @click="following">关注 {{this.userMessage.attention_count}}</el-button>
-        <el-button class="btn-edit" type="info" plain round @click="dialogFormVisible=true">编辑个人资料</el-button>
+        <el-button v-if="isEdit" class="user-attention" type="text" @click="following">关注 {{this.userMessage.attention_count}}</el-button>
+        <el-button v-if="isEdit" class="btn-edit" type="info" plain round @click="dialogFormVisible=true">编辑个人资料</el-button>
         <div class="user-introduction">{{this.userMessage.user_introduction}}</div>
         <div class="image-title">作品</div>
         <div class="user-image">
-          <el-col :span="4" v-for="o in imageNum" :key="o" style="margin-top:40px;margin-right:20px;">
-            <el-card :body-style="{ padding: '80px' }" shadow="hover" class="img-card">
-              用户图片{{o}}
+          <el-col :span="4" v-for="image in userImageList" :key="image" style="margin:10px 20px;" @click.native="recommandClick(image.image_id)">
+            <el-card :body-style="{ padding: '0px' }" shadow="hover" class="img-card">
+              <img :src="image.image_url" class="image">
             </el-card>
+            <div style="height:40px;text-align:left; margin-left:10px;font-size:16px;">
+              <div style="font-weight:bold;">
+                <span>{{image.image_title}}</span>
+              </div>
+              <div>
+                <span>{{image.user.username}}</span>
+              </div>
+            </div>
           </el-col>
         </div>
         <el-button class="load-image" type="info" round @click="imageNum+=3">加载更多</el-button>
@@ -71,10 +79,13 @@ export default {
     }
     return {
       msg: 'animal',
-      imageNum: 6,
       dialogFormVisible: false,
       passwordCheck: true,
-      userMessage: state.userMessage,
+      isEdit: true,
+      userMessage: [],
+      userImageList: [],
+      user_id: 0,
+      offset: 0,
       form: {
         user_id: '',
         password: '',
@@ -88,11 +99,50 @@ export default {
     }
   },
   created () {
-    // 进入页面时执行
+    // 获取用户id
+    this.user_id = this.$route.params.id
+    // eslint-disable-next-line
+    if (this.user_id != state.userMessage.user_id) {
+      this.isEdit = false
+      // 其它用户的信息
+      const _this = this
+      this.$axios.get(state.domain + '/user/' + this.user_id).then(function (response) {
+        if (response.data.code === 200) {
+          _this.userMessage = response.data.data
+        } else {
+          // 获取用户信息失败
+          _this.$notify.error({
+            title: '获取用户信息失败',
+            message: response.data.message
+          })
+        }
+      })
+    } else {
+      // 自己的信息
+      this.userMessage = state.userMessage
+    }
     this.form.user_id = this.userMessage.user_id
     this.form.user_introduction = this.userMessage.user_introduction
+    // 获取用户图片
+    this.getUserImageList()
   },
   methods: {
+    // 获取用户图片
+    getUserImageList () {
+      this.offset = this.userImageList.length
+      const _this = this
+      this.$axios.get(state.domain + '/user/upload_image/' + this.user_id + '/' + this.offset).then(function (response) {
+        if (response.data.code === 200) {
+          _this.userImageList = _this.userImageList.concat(response.data.data)
+        } else {
+          // 获取用户图片信息失败
+          _this.$notify.error({
+            title: '获取用户图片信息失败',
+            message: response.data.message
+          })
+        }
+      })
+    },
     following () {
       let id = this.$route.params.id
       this.$router.push({path: id + '/following'})
@@ -127,6 +177,9 @@ export default {
           })
         }
       })
+    },
+    recommandClick (index) {
+      this.$router.push({path: '/artworks/' + index})
     }
   }
 }
@@ -174,18 +227,23 @@ export default {
 .image-title {
   margin-top: 100px;
   text-align: left;
+  margin-left: 30px;
   font-size: 20px;
   font-weight: bold;
+}
+.image {
+  width: 100%;
+  display: block;
 }
 .img-card {
   border-radius: 10px;
   height: 220px;
   width: 220px;
-  margin-right: 10px;
-  margin-left: 10px;
+  margin: 10px;
+  cursor: pointer;
 }
 .load-image {
-  margin: 50px 0px 20px -100px;
+  margin: 50px 0px 50px 20px;
   width: 1200px;
 }
 </style>

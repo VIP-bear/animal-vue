@@ -31,7 +31,7 @@
               <el-button type="text">粉丝 {{userMessage.follow_count}}</el-button>
             </div>
           </div>
-          <el-dropdown-item style="font-size:16px;margin-top:5px;" icon="el-icon-star-off">收藏</el-dropdown-item>
+          <el-dropdown-item style="font-size:16px;margin-top:5px;" icon="el-icon-star-off" @click.native="bookmarks">收藏</el-dropdown-item>
           <el-dropdown-item style="font-size:16px;margin-top:5px;" icon="el-icon-bell">通知</el-dropdown-item>
           <el-dropdown-item style="font-size:16px;margin-top:5px;" icon="el-icon-setting">设置</el-dropdown-item>
           <el-dropdown-item style="font-size:16px;margin-top:5px;" icon="el-icon-close" @click.native="signOut">退出登录</el-dropdown-item>
@@ -77,6 +77,9 @@ export default {
     },
     login () {
       this.$router.push({path: '/login'})
+    },
+    bookmarks () {
+      this.$router.push({path: '/users/' + this.userMessage.user_id + '/bookmarks'})
     },
     // 退出登录
     signOut () {

@@ -15,20 +15,17 @@
           </div>
           <!-- 右侧用户信息 -->
           <div class="user-msg">
-            <el-avatar> {{imageMessage.user.username}} </el-avatar>
-            <el-link :underline="false" class="user-name">{{imageMessage.user.username}}</el-link>
+            <el-avatar style="cursor: pointer;" @click.native="jumpToUser(imageMessage.user.user_id)"> {{imageMessage.user.username}} </el-avatar>
+            <el-link :underline="false" class="user-name" @click.native="jumpToUser(imageMessage.user.user_id)">{{imageMessage.user.username}}</el-link>
             <el-button class="user-attention" round @click="attentionUser">{{attention ? '已关注' : '关注'}}</el-button>
             <div style="margin:40px 0px 0px 10px;">
               <span class="other-image">其他图片</span>
-              <el-link :underline="false" class="all-image">全部图片</el-link>
+              <el-link :underline="false" class="all-image" @click.native="jumpToUser(imageMessage.user.user_id)">全部图片</el-link>
             </div>
             <div class="user-image">
-              <el-col :span="8" v-for="imageUrl in imageMessage.urls" :key="imageUrl">
-                <el-image
-                  style="width: 80px; height: 80px; cursor: pointer;"
-                  :src="imageUrl"
-                  :fit="cover">
-                </el-image>
+              <el-col :span="8" v-for="image in imageMessage.imageList" :key="image" style="padding:3px;" @click.native="recommandClick(image.image_id)">
+                <img style="cursor: pointer;width:80px;height:80px;object-fit: cover;"
+                  :src="image.image_url">
               </el-col>
             </div>
             <div class="image-title">
@@ -132,33 +129,47 @@ export default {
     }
   },
   created () {
-    this.image_id = this.$route.params.id
     this.user_id = state.userMessage.user_id
     this.username = state.userMessage.username
     // 获取图片信息
-    const _this = this
-    this.$axios.get(state.domain + '/image/' + this.image_id + '/' + this.user_id).then(function (response) {
-      if (response.data.code === 200) {
-        _this.imageMessage = response.data.data
-        _this.formatDate()
-        _this.favorites = _this.imageMessage.favorites
-        _this.attention = _this.imageMessage.attention
-      } else {
-        // 获取信息失败
-        _this.$notify.error({
-          title: '获取图片信息失败',
-          message: response.data.message
-        })
-      }
-    })
+    this.getImageMessage()
     // 获取评论
     this.getComment()
   },
   methods: {
+    // 跳转到用户界面
+    jumpToUser (userId) {
+      this.$router.push({path: '/users/' + userId})
+    },
+    recommandClick (index) {
+      this.$router.push({path: '/artworks/' + index})
+      this.getImageMessage()
+      this.getComment()
+    },
+    // 获取图片信息
+    getImageMessage () {
+      this.image_id = this.$route.params.id
+      const _this = this
+      this.$axios.get(state.domain + '/image/' + this.image_id + '/' + this.user_id).then(function (response) {
+        if (response.data.code === 200) {
+          _this.imageMessage = response.data.data
+          _this.formatDate()
+          _this.favorites = _this.imageMessage.favorites
+          _this.attention = _this.imageMessage.attention
+        } else {
+          // 获取信息失败
+          _this.$notify.error({
+            title: '获取图片信息失败',
+            message: response.data.message
+          })
+        }
+      })
+    },
     // 格式化时间
     formatDate () {
+      this.uploadTime = ''
       let date = new Date(this.imageMessage.image.image_upload_time)
-      this.uploadTime += date.getFullYear() + '/' + date.getMonth() + '/' + date.getDate() + ' '
+      this.uploadTime += date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate() + ' '
       this.uploadTime += date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
     },
     // 关注用户
@@ -218,6 +229,7 @@ export default {
         })
       }
     },
+    // 取消/收藏图片
     favoritesImage () {
       this.favorites = !this.favorites
       let flag = this.favorites ? '1' : '0'

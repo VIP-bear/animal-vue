@@ -91,10 +91,13 @@ export default {
         image: ''
       },
       dynamicTags: [],
-      recommendTags: ['推荐标签1', '推荐标签2', '推荐标签3', '推荐标签4', '推荐标签5', '推荐标签6', '推荐标签7', '推荐标签8', '推荐标签9', '推荐标签10'],
+      recommendTags: [],
       inputVisible: false,
       inputTag: ''
     }
+  },
+  created () {
+    this.recommendTags = state.userMessage.tags.split('#')
   },
   methods: {
     // 选择图片成功时触发

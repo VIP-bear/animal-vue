@@ -87,14 +87,17 @@
             <span>相关图片</span>
           </div>
           <div>
-            <el-col :span="4" v-for="o in relatedImageNum" :key="o" style="margin-top:40px;margin-right:20px;">
-              <el-card :body-style="{ padding: '80px' }" shadow="hover" class="img-card">
-                相关图片{{o}}
+            <el-col :span="4" v-for="image in relatedImageList" :key="image" style="margin:20px 20px 20px 0px;">
+              <el-card :body-style="{ padding: '0px' }" shadow="hover" class="img-card" @click.native="recommandClick(image.image_id)">
+                <img :src="image.image_url" class="image">
               </el-card>
-              <span>图片标题</span>
-              <div>
-                <span>用户头像</span>
-                <span>用户名</span>
+              <div style="height:40px;text-align:left; margin-left:10px;font-size:16px;">
+                <div style="font-weight:bold;">
+                  <span>{{image.image_title}}</span>
+                </div>
+                <div style="cursor: pointer; float:left" @click="jumpToUser(image.user.user_id)">
+                  <span>{{image.user.username}}</span>
+                </div>
               </div>
             </el-col>
           </div>
@@ -124,6 +127,7 @@ export default {
       attention: false,
       inputComment: '',
       commentList: [],
+      relatedImageList: [],
       offset: 0,
       size: 5
     }
@@ -135,6 +139,8 @@ export default {
     this.getImageMessage()
     // 获取评论
     this.getComment()
+    // 获取关联图片
+    this.getRelatedImageList()
   },
   methods: {
     // 跳转到用户界面
@@ -145,6 +151,7 @@ export default {
       this.$router.push({path: '/artworks/' + index})
       this.getImageMessage()
       this.getComment()
+      this.getRelatedImageList()
     },
     // 获取图片信息
     getImageMessage () {
@@ -165,6 +172,23 @@ export default {
         }
       })
     },
+    // 获取关联图片
+    getRelatedImageList () {
+      const offset = this.relatedImageList.length
+      const _this = this
+      this.$axios.get(state.domain + '/image/recommend/' + this.image_id + '/' + offset).then(function (response) {
+        if (response.data.code === 200) {
+          _this.relatedImageList = response.data.data
+          console.log(_this.relatedImageList)
+        } else {
+          // 获取关联图片失败
+          _this.$notify.error({
+            title: '获取关联图片失败',
+            message: response.data.message
+          })
+        }
+      })
+    },
     // 格式化时间
     formatDate () {
       this.uploadTime = ''
@@ -176,7 +200,7 @@ export default {
     attentionUser () {
       this.attention = !this.attention
       const _this = this
-      let data = {'image_id': this.image_id, 'user_id': this.user_id, 'attention_user_id': this.imageMessage.user.user_id, 'state': this.attention ? 1 : 0}
+      let data = {'user_id': this.user_id, 'attention_user_id': this.imageMessage.user.user_id, 'state': this.attention ? 1 : 0}
       this.$axios.post(state.domain + '/user/attention', data).then(function (response) {
         if (response.data.code === 200) {
           _this.$notify({
@@ -360,12 +384,15 @@ export default {
   font-size: 24px;
   font-weight: bold;
 }
+.image {
+  width: 100%;
+  display: block;
+}
 .img-card {
   border-radius: 10px;
   height: 220px;
   width: 220px;
-  margin-right: 10px;
-  margin-left: 10px;
+  margin: 10px;
   cursor: pointer;
 }
 .load-image {

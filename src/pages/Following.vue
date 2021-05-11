@@ -44,7 +44,7 @@ export default {
     }
   },
   created () {
-    this.userMessage = state.userMessage
+    this.userMessage = JSON.parse(sessionStorage.getItem('userMessage'))
     // 获取关注列表
     let offset = this.userList.length
     const _this = this

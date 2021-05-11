@@ -78,7 +78,7 @@
                 <span style="float:right;font-size:14px;margin-top:15px;">{{uploadTime}}</span>
               </div>
             </div>
-            <el-button class="load-comment" type="info" round @click="offset+=5">浏览更多</el-button>
+            <el-button v-if="loadMoreComment" class="load-comment" type="info" round @click="getComment">浏览更多</el-button>
           </div>
         </div>
         <!-- 相关图片 -->
@@ -101,7 +101,7 @@
               </div>
             </el-col>
           </div>
-          <el-button class="load-image" type="info" round @click="relatedImageNum+=20">加载更多</el-button>
+          <el-button v-if="loadMoreImage" class="load-image" type="info" round @click="getRelatedImageList">加载更多</el-button>
         </div>
       </div>
     </div>
@@ -119,6 +119,7 @@ export default {
       msg: 'animal',
       relatedImageNum: 10,
       imageMessage: [],
+      userMessage: [],
       image_id: -1,
       user_id: -1,
       username: '',
@@ -127,14 +128,15 @@ export default {
       attention: false,
       inputComment: '',
       commentList: [],
+      loadMoreComment: true,
       relatedImageList: [],
-      offset: 0,
-      size: 5
+      loadMoreImage: true
     }
   },
   created () {
-    this.user_id = state.userMessage.user_id
-    this.username = state.userMessage.username
+    this.userMessage = JSON.parse(sessionStorage.getItem('userMessage'))
+    this.user_id = this.userMessage.user_id
+    this.username = this.userMessage.username
     // 获取图片信息
     this.getImageMessage()
     // 获取评论
@@ -176,18 +178,23 @@ export default {
     getRelatedImageList () {
       const offset = this.relatedImageList.length
       const _this = this
-      this.$axios.get(state.domain + '/image/recommend/' + this.image_id + '/' + offset).then(function (response) {
-        if (response.data.code === 200) {
-          _this.relatedImageList = response.data.data
-          console.log(_this.relatedImageList)
-        } else {
-          // 获取关联图片失败
-          _this.$notify.error({
-            title: '获取关联图片失败',
-            message: response.data.message
-          })
-        }
-      })
+      if (this.loadMoreImage) {
+        this.$axios.get(state.domain + '/image/recommend/' + this.image_id + '/' + offset).then(function (response) {
+          if (response.data.code === 200) {
+            _this.relatedImageList = _this.relatedImageList.concat(response.data.data)
+            if (_this.relatedImageList.length === offset) {
+              _this.loadMoreImage = false
+            }
+            console.log(_this.relatedImageList)
+          } else {
+            // 获取关联图片失败
+            _this.$notify.error({
+              title: '获取关联图片失败',
+              message: response.data.message
+            })
+          }
+        })
+      }
     },
     // 格式化时间
     formatDate () {
@@ -219,19 +226,25 @@ export default {
     },
     // 获取评论
     getComment () {
+      const offset = this.commentList.length
       const _this = this
-      this.$axios.get(state.domain + '/comment/' + this.image_id + '/' + this.offset + '/' + this.size).then(function (response) {
-        if (response.data.code === 200) {
-          _this.commentList = _this.commentList.concat(response.data.data)
-          console.log(response.data.data)
-        } else {
-          // 获取信息失败
-          _this.$notify.error({
-            title: '获取评论信息失败',
-            message: response.data.message
-          })
-        }
-      })
+      if (this.loadMoreComment) {
+        this.$axios.get(state.domain + '/comment/' + this.image_id + '/' + offset).then(function (response) {
+          if (response.data.code === 200) {
+            _this.commentList = _this.commentList.concat(response.data.data)
+            if (_this.commentList.length === offset) {
+              _this.loadMoreComment = false
+            }
+            console.log(response.data.data)
+          } else {
+            // 获取信息失败
+            _this.$notify.error({
+              title: '获取评论信息失败',
+              message: response.data.message
+            })
+          }
+        })
+      }
     },
     // 发表评论
     pulishComment () {

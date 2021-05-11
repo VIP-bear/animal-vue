@@ -128,7 +128,7 @@ export default {
       if (response.data.code === 200) {
         state.recommendImage = response.data.data
         _this.recommendImage = response.data.data
-        console.log(_this.recommendImage)
+        console.log('推荐图片: ' + _this.recommendImage)
       } else {
         // 获取排行榜信息失败
         _this.$notify.error({
@@ -138,9 +138,9 @@ export default {
       }
     })
     // 获取关注用户图片
-    this.$axios.get(state.domain + '/image/attention/' + this.user_id).then(function (response) {
+    const offset = 0
+    this.$axios.get(state.domain + '/image/attention/' + this.user_id + '/' + offset).then(function (response) {
       if (response.data.code === 200) {
-        state.attentionUserImage = response.data.data
         _this.attentionUserImage = response.data.data
       } else {
         // 获取关注用户图片信息失败

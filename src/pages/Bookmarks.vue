@@ -24,7 +24,7 @@
             </div>
           </el-col>
         </div>
-        <el-button class="load-image" type="info" round @click="imageNum+=3">加载更多</el-button>
+        <el-button v-if="loadMoreImage" class="load-image" type="info" round @click="getFavoritesImageList">加载更多</el-button>
       </div>
     </div>
   </div>
@@ -41,12 +41,13 @@ export default {
       msg: 'animal',
       userMessage: [],
       favoritesImageList: [],
+      loadMoreImage: true,
       offset: 0
     }
   },
   created () {
     // 进入页面时执行
-    this.userMessage = state.userMessage
+    this.userMessage = JSON.parse(sessionStorage.getItem('userMessage'))
     // 获取收藏图片
     this.getFavoritesImageList()
   },
@@ -58,19 +59,22 @@ export default {
     getFavoritesImageList () {
       this.offset = this.favoritesImageList.length
       const _this = this
-      this.$axios.get(state.domain + '/image/favorites/' + this.userMessage.user_id + '/' + this.offset).then(function (response) {
-        if (response.data.code === 200) {
-          _this.favoritesImageList = _this.favoritesImageList.concat(response.data.data)
-          console.log('data: ' + response.data.data)
-          console.log('fa: ' + _this.favoritesImageList)
-        } else {
-          // 获取收藏图片信息失败
-          _this.$notify.error({
-            title: '获取收藏图片信息失败',
-            message: response.data.message
-          })
-        }
-      })
+      if (this.loadMoreImage) {
+        this.$axios.get(state.domain + '/image/favorites/' + this.userMessage.user_id + '/' + this.offset).then(function (response) {
+          if (response.data.code === 200) {
+            _this.favoritesImageList = _this.favoritesImageList.concat(response.data.data)
+            if (_this.offset === _this.favoritesImageList.length) {
+              _this.loadMoreImage = false
+            }
+          } else {
+            // 获取收藏图片信息失败
+            _this.$notify.error({
+              title: '获取收藏图片信息失败',
+              message: response.data.message
+            })
+          }
+        })
+      }
     },
     recommandClick (index) {
       this.$router.push({path: '/artworks/' + index})

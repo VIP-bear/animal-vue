@@ -25,7 +25,7 @@
             </div>
           </el-col>
         </div>
-        <el-button class="load-image" type="info" round @click="imageNum+=3">加载更多</el-button>
+        <el-button v-if="loadMoreImage" class="load-image" type="info" round @click="getUserImageList">加载更多</el-button>
       </div>
     </div>
     <el-dialog width="20%" title="用户信息" :visible.sync="dialogFormVisible">
@@ -84,6 +84,7 @@ export default {
       isEdit: true,
       userMessage: [],
       userImageList: [],
+      loadMoreImage: true,
       user_id: 0,
       offset: 0,
       form: {
@@ -119,7 +120,7 @@ export default {
       })
     } else {
       // 自己的信息
-      this.userMessage = state.userMessage
+      this.userMessage = JSON.parse(sessionStorage.getItem('userMessage'))
     }
     this.form.user_id = this.userMessage.user_id
     this.form.user_introduction = this.userMessage.user_introduction
@@ -131,17 +132,22 @@ export default {
     getUserImageList () {
       this.offset = this.userImageList.length
       const _this = this
-      this.$axios.get(state.domain + '/user/upload_image/' + this.user_id + '/' + this.offset).then(function (response) {
-        if (response.data.code === 200) {
-          _this.userImageList = _this.userImageList.concat(response.data.data)
-        } else {
-          // 获取用户图片信息失败
-          _this.$notify.error({
-            title: '获取用户图片信息失败',
-            message: response.data.message
-          })
-        }
-      })
+      if (this.loadMoreImage) {
+        this.$axios.get(state.domain + '/user/upload_image/' + this.user_id + '/' + this.offset).then(function (response) {
+          if (response.data.code === 200) {
+            _this.userImageList = _this.userImageList.concat(response.data.data)
+            if (_this.offset === _this.userImageList.length) {
+              _this.loadMoreImage = false
+            }
+          } else {
+            // 获取用户图片信息失败
+            _this.$notify.error({
+              title: '获取用户图片信息失败',
+              message: response.data.message
+            })
+          }
+        })
+      }
     },
     following () {
       let id = this.$route.params.id

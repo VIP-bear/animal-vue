@@ -47,7 +47,7 @@
             <div>
               <div class="image-number">
                 <i class="el-icon-view">{{imageMessage.image.image_view_count}}</i>
-                <i class="el-icon-thumb" style="margin-left:20px;">{{imageMessage.image.image_like_count}}</i>
+                <!-- <i class="el-icon-thumb" style="margin-left:20px;">{{imageMessage.image.image_like_count}}</i> -->
                 <i class="el-icon-star-on" style="margin-left:20px;">{{imageMessage.image.image_favorites_count}}</i>
               </div>
               <div class="image-time">{{uploadTime}}</div>
@@ -56,10 +56,10 @@
         </div>
         <!-- 用户操作（点赞、收藏、更多） -->
         <div class="imag-operate">
-          <el-button style="font-size:16px;" type="text" icon="el-icon-thumb">赞!</el-button>
+          <!-- <el-button style="font-size:16px;" type="text" icon="el-icon-thumb">赞!</el-button> -->
           <el-button v-if="favorites" style="font-size:16px;" type="text" icon="el-icon-star-on" @click="favoritesImage">已收藏</el-button>
           <el-button v-else style="font-size:16px;" type="text" icon="el-icon-star-off" @click="favoritesImage">收藏</el-button>
-          <el-button style="font-size:16px; margin-right:10px;" type="text" icon="el-icon-more">更多</el-button>
+          <!-- <el-button style="font-size:16px; margin-right:10px;" type="text" icon="el-icon-more">更多</el-button> -->
         </div>
         <!-- 评论 -->
         <div style="width: 1000px;margin-left: 25%;background-color:white">
@@ -117,7 +117,6 @@ export default {
   data () {
     return {
       msg: 'animal',
-      relatedImageNum: 10,
       imageMessage: [],
       userMessage: [],
       image_id: -1,

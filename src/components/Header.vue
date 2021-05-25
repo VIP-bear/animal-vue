@@ -10,13 +10,14 @@
         class="search-input"
         placeholder="搜索图片"
         prefix-icon="el-icon-search"
-        v-model="input_content"
-        maxlength="30">
+        v-model="search_name"
+        maxlength="30"
+        @keyup.enter.native="searchImage">
       </el-input>
     </div>
     <div v-if="isLogin" class="login-contain">
       <el-button class="btn-upload" type="info" round @click="upload">上传图片</el-button>
-      <el-button class="btn-message" title="消息" type="text" circle></el-button>
+      <el-button class="btn-message" title="最新作品" type="text" circle @click="newImage"></el-button>
       <el-dropdown trigger="click" class="dropdown">
         <span class="el-dropdown-link">
           <el-avatar :size="50">{{userMessage.username}}</el-avatar>
@@ -32,8 +33,8 @@
             </div>
           </div>
           <el-dropdown-item style="font-size:16px;margin-top:5px;" icon="el-icon-star-off" @click.native="bookmarks">收藏</el-dropdown-item>
-          <el-dropdown-item style="font-size:16px;margin-top:5px;" icon="el-icon-bell">通知</el-dropdown-item>
-          <el-dropdown-item style="font-size:16px;margin-top:5px;" icon="el-icon-setting">设置</el-dropdown-item>
+          <!-- <el-dropdown-item style="font-size:16px;margin-top:5px;" icon="el-icon-bell">通知</el-dropdown-item>
+          <el-dropdown-item style="font-size:16px;margin-top:5px;" icon="el-icon-setting">设置</el-dropdown-item> -->
           <el-dropdown-item style="font-size:16px;margin-top:5px;" icon="el-icon-close" @click.native="signOut">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -52,14 +53,14 @@ export default {
   name: 'Header',
   data () {
     return {
-      isCollapse: false,
-      input_content: '',
+      search_name: '',
       isLogin: state.hasLogin,
       userMessage: state.userMessage,
       loginText: '登录'
     }
   },
   created () {
+    this.search_name = this.$route.params.tag
     state.userMessage = JSON.parse(sessionStorage.getItem('userMessage'))
     state.hasLogin = sessionStorage.getItem('hasLogin')
     this.userMessage = state.userMessage
@@ -84,6 +85,16 @@ export default {
     // 退出登录
     signOut () {
       this.$router.push({path: '/'})
+    },
+    // 搜索图片
+    searchImage () {
+      if (this.search_name !== '') {
+        this.$router.push({path: '/tags/' + this.search_name})
+        location.reload()
+      }
+    },
+    newImage () {
+      this.$router.push({path: '/new_image'})
     }
   }
 }

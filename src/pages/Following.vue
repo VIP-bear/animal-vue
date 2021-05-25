@@ -8,8 +8,8 @@
         <span class="user-name">{{userMessage.username}}</span>
         <div class="attention-num">关注 {{userMessage.attention_count}}</div>
         <div class="attention-usr-msg" v-for="attention in userList" :key="attention">
-          <el-avatar :size="80"> {{attention.user.username}} </el-avatar>
-          <span style="position: absolute; margin-left: 10px;">{{attention.user.username}}</span>
+          <el-avatar :size="80" @click.native="jumpToUser(attention.user.user_id)"> {{attention.user.username}} </el-avatar>
+          <span style="position: absolute; margin-left: 10px;cursor: pointer;"  @click.native="jumpToUser(attention.user.user_id)">{{attention.user.username}}</span>
           <span class="user-desc">{{attention.user.user_introduction}}</span>
           <el-button class="user-attention" round>已关注</el-button>
           <div class="user-images">
@@ -63,6 +63,10 @@ export default {
   methods: {
     recommandClick (index) {
       this.$router.push({path: '/artworks/' + index})
+    },
+    // 跳转到用户界面
+    jumpToUser (userId) {
+      this.$router.push({path: '/users/' + userId})
     }
   }
 }

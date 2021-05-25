@@ -2,15 +2,6 @@
   <div>
     <Header></Header>
     <div class="main-msg">
-      <div class="hot-tags">
-        <el-row>
-          <el-col :span="3" v-for="o in 8" :key="o" style="padding:2px;">
-            <el-card :body-style="{ padding: '10px' }" shadow="hover" style="background-color: violet;">
-              <el-button class="btn-tag" type="text" @click="searchTag(o)">标签{{o}}</el-button>
-            </el-card>
-          </el-col>
-        </el-row>
-      </div>
       <div class="ranking">
         <div class="ranking-title">
           <span>{{new Date().getMonth() + 1}}月{{new Date().getDate()}}日 排行榜</span>
@@ -51,7 +42,6 @@
       <div class="attention-contain" style="float:left;">
         <div class="attention-title">
           <span>关注用户图片</span>
-          <el-link :underline="false" style="margin-left:1200px" @click.native="allUserImage">查看全部</el-link>
         </div>
         <el-col :span="4" v-for="image in attentionUserImage" :key="image" style="margin:20px 0px;">
           <el-card :body-style="{ padding: '0px' }" shadow="hover" class="img-card" @click.native="recommandClick(image.image_id)">
@@ -205,11 +195,6 @@ export default {
 <style scoped>
 .main-msg {
   margin: 0px 200px;
-}
-.hot-tags {
-  height: 60px;
-  margin-top: 50px;
-  border-radius: 5px;
 }
 .btn-tag {
   font-size: 24px;

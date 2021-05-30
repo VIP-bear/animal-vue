@@ -33,8 +33,6 @@
             </div>
           </div>
           <el-dropdown-item style="font-size:16px;margin-top:5px;" icon="el-icon-star-off" @click.native="bookmarks">收藏</el-dropdown-item>
-          <!-- <el-dropdown-item style="font-size:16px;margin-top:5px;" icon="el-icon-bell">通知</el-dropdown-item>
-          <el-dropdown-item style="font-size:16px;margin-top:5px;" icon="el-icon-setting">设置</el-dropdown-item> -->
           <el-dropdown-item style="font-size:16px;margin-top:5px;" icon="el-icon-close" @click.native="signOut">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>

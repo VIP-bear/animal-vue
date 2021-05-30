@@ -3,12 +3,16 @@
     <Header></Header>
     <el-button class="bg-image" type="info" plain>背景图片</el-button>
     <div class="main-msg">
+      <!-- 用户信息 -->
       <div class="user-msg">
-        <el-avatar :size="120" class="user-header"> {{this.userMessage.username}} </el-avatar>
+        <el-avatar :size="120" class="user-header">{{this.userMessage.username}}</el-avatar>
         <span class="user-name">{{this.userMessage.username}}</span>
-        <el-button v-if="isEdit" class="user-attention" type="text" @click="following">关注 {{this.userMessage.attention_count}}</el-button>
-        <el-button v-if="isEdit" class="btn-edit" type="info" plain round @click="dialogFormVisible=true">编辑个人资料</el-button>
+        <el-button v-if="isEdit" class="user-attention" type="text" 
+          @click="following">关注 {{this.userMessage.attention_count}}</el-button>
+        <el-button v-if="isEdit" class="btn-edit" type="info" plain round 
+          @click="dialogFormVisible=true">编辑个人资料</el-button>
         <div class="user-introduction">{{this.userMessage.user_introduction}}</div>
+        <!-- 作品 -->
         <div class="image-title">作品</div>
         <div class="user-image">
           <el-col :span="4" v-for="image in userImageList" :key="image" style="margin:10px 20px;" @click.native="recommandClick(image.image_id)">
@@ -25,9 +29,11 @@
             </div>
           </el-col>
         </div>
-        <el-button v-if="loadMoreImage" class="load-image" type="info" round @click="getUserImageList">加载更多</el-button>
+        <el-button v-if="loadMoreImage" class="load-image" type="info" round 
+          @click="getUserImageList">加载更多</el-button>
       </div>
     </div>
+    <!-- 编辑用户信息 -->
     <el-dialog width="20%" title="用户信息" :visible.sync="dialogFormVisible">
       <el-form :model="form" :rules="rules" ref="registerForm">
         <el-form-item prop="password" label="用户密码" :label-width="120">

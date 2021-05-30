@@ -6,7 +6,8 @@
       <div style="background-color:rgb(241, 238, 238);">
         <div style="width:100%">
           <!-- 图片 -->
-          <div style="width:1000px; margin-left:25%; background-color: rgb(240, 245, 240);float:left;">
+          <div style="width:1000px; margin-left:25%; 
+          background-color: rgb(240, 245, 240);float:left;">
             <el-image
               class="image"
               :src="imageMessage.image.image_url"
@@ -54,7 +55,7 @@
             </div>
           </div>
         </div>
-        <!-- 用户操作（点赞、收藏、更多） -->
+        <!-- 收藏 -->
         <div class="imag-operate">
           <!-- <el-button style="font-size:16px;" type="text" icon="el-icon-thumb">赞!</el-button> -->
           <el-button v-if="favorites" style="font-size:16px;" type="text" icon="el-icon-star-on" @click="favoritesImage">已收藏</el-button>
@@ -78,7 +79,8 @@
                 <span style="float:right;font-size:14px;margin-top:15px;">{{uploadTime}}</span>
               </div>
             </div>
-            <el-button v-if="loadMoreComment" class="load-comment" type="info" round @click="getComment">浏览更多</el-button>
+            <el-button v-if="loadMoreComment" class="load-comment" type="info" round 
+              @click="getComment">浏览更多</el-button>
           </div>
         </div>
         <!-- 相关图片 -->
@@ -87,8 +89,10 @@
             <span>相关图片</span>
           </div>
           <div>
-            <el-col :span="4" v-for="image in relatedImageList" :key="image" style="margin:20px 20px 20px 0px;">
-              <el-card :body-style="{ padding: '0px' }" shadow="hover" class="img-card" @click.native="recommandClick(image.image_id)">
+            <el-col :span="4" v-for="image in relatedImageList" :key="image" 
+              style="margin:20px 20px 20px 0px;">
+              <el-card :body-style="{ padding: '0px' }" shadow="hover" class="img-card" 
+                @click.native="recommandClick(image.image_id)">
                 <img :src="image.image_url" class="image">
               </el-card>
               <div style="height:40px;text-align:left; margin-left:10px;font-size:16px;">
@@ -101,7 +105,8 @@
               </div>
             </el-col>
           </div>
-          <el-button v-if="loadMoreImage" class="load-image" type="info" round @click="getRelatedImageList">加载更多</el-button>
+          <el-button v-if="loadMoreImage" class="load-image" type="info" round 
+            @click="getRelatedImageList">加载更多</el-button>
         </div>
       </div>
     </div>
@@ -248,7 +253,8 @@ export default {
     // 发表评论
     pulishComment () {
       const _this = this
-      let data = {'image_id': this.image_id, 'user_id': this.user_id, 'comment_content': this.inputComment}
+      let data = {'image_id': this.image_id, 'user_id': this.user_id, 
+        'comment_content': this.inputComment}
       if (this.inputComment !== '') {
         this.$axios.post(state.domain + '/comment/publish', data).then(function (response) {
           if (response.data.code === 200) {

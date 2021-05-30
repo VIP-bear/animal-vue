@@ -1,6 +1,7 @@
 <template>
   <div>
     <Header></Header>
+    <!-- 本地选择图片 -->
     <div class="upload-image">
       <el-upload
         action="#"
@@ -15,7 +16,9 @@
         <div slot="tip" style="font-size:12px; color: white;" class="el-upload__tip">只能上传jpg/png文件，且不超过10MB</div>
       </el-upload>
     </div>
-    <div style="background-color: rgb(231, 227, 227); padding: 50px 0px">
+    <div style="background-color: rgb(231, 227, 227); 
+      padding: 50px 0px">
+      <!-- 图片标题、说明、标签、上传 -->
       <div class="image-msg">
         <el-input
           placeholder="标题"

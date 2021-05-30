@@ -3,12 +3,16 @@
     <Header></Header>
     <el-button class="bg-image" type="info" plain>背景图片</el-button>
     <div class="main-msg">
+      <!-- 用户信息 -->
       <div class="user-msg">
-        <el-avatar :size="120" class="user-header"> {{this.userMessage.username}} </el-avatar>
+        <el-avatar :size="120" class="user-header">
+           {{this.userMessage.username}} </el-avatar>
         <span class="user-name">{{this.userMessage.username}}</span>
-        <el-button class="user-attention" type="text" @click="following">关注 {{this.userMessage.attention_count}}</el-button>
+        <el-button class="user-attention" type="text" @click="following">
+          关注 {{this.userMessage.attention_count}}</el-button>
         <div class="user-introduction">{{this.userMessage.user_introduction}}</div>
         <div class="image-title">收藏</div>
+        <!-- 收藏 -->
         <div class="user-image">
           <el-col :span="4" v-for="image in favoritesImageList" :key="image" style="margin:10px;" @click.native="recommandClick(image.image_id)">
             <el-card :body-style="{ padding: '0px' }" shadow="hover" class="img-card">
@@ -24,7 +28,8 @@
             </div>
           </el-col>
         </div>
-        <el-button v-if="loadMoreImage" class="load-image" type="info" round @click="getFavoritesImageList">加载更多</el-button>
+        <el-button v-if="loadMoreImage" class="load-image" type="info" round 
+          @click="getFavoritesImageList">加载更多</el-button>
       </div>
     </div>
   </div>
@@ -60,7 +65,8 @@ export default {
       this.offset = this.favoritesImageList.length
       const _this = this
       if (this.loadMoreImage) {
-        this.$axios.get(state.domain + '/image/favorites/' + this.userMessage.user_id + '/' + this.offset).then(function (response) {
+        this.$axios.get(state.domain + '/image/favorites/' + this.userMessage.user_id + 
+          '/' + this.offset).then(function (response) {
           if (response.data.code === 200) {
             _this.favoritesImageList = _this.favoritesImageList.concat(response.data.data)
             if (_this.offset === _this.favoritesImageList.length) {
